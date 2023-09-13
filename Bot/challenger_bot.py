@@ -107,7 +107,7 @@ def generate_challenge(challenge_numberOf, partySize, player_names = [], max_lev
     if len(player_names) != 0 and len(player_names) != partySize: return "Number of player names (" + str(len(player_names)) + ") does not match the party size (" + str(partySize) + ")."
     if challenge_numberOf <= 0 or challenge_numberOf > len(c): return "Number of challenges (" + str(challenge_numberOf) + ") not valid. Should be between 1 and " + str(len(c)) + "."
     
-    ret_str = "Welcome to the FFXIV challenge generator!\n"
+    ret_str = "```Welcome to the FFXIV challenge run generator!\n"
     
     inst = get_instances(i, partySize, max_level, with_hard)
     ret_str += "Instance     : " + inst + "\n"
@@ -147,7 +147,9 @@ def generate_challenge(challenge_numberOf, partySize, player_names = [], max_lev
         for r in role[1:len(role)]:
             ret_str += "               " + r + "\n"
 
+    ret_str += "```"
+
     return ret_str
 
 
-print(generate_challenge(2, 4, ["Leen", "Dark", "Le Z", "Panda"]))
+print(generate_challenge(2, 4, ["Leen", "Dark", "Usas", "Riri"]))
