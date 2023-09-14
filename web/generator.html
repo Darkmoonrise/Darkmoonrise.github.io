@@ -82,6 +82,31 @@
             background-color: #333; /* Dark gray background color */
             color: #fff; /* White text color */
         }
+
+        /* Style for the Generate button and result text field */
+        .generate-button {
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #0073e6;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .result-text {
+            width: 100%;
+            max-width: 400px;
+            height: 100px; /* Increase the height */
+            margin: 20px auto; /* Centered horizontally and separated from other elements */
+            padding: 20px; /* Increase the padding */
+            background-color: #fff; /* White background color */
+            color: #333; /* Dark text color */
+            border: none;
+            border-radius: 5px;
+            text-align: center; /* Center text */
+            overflow: auto; /* Add scrolling if content exceeds the height */
+        }
     </style>
 </head>
 <body>
@@ -145,17 +170,24 @@
                     <input type="text" id="textField8" name="textField8" readonly>
                 </div>
             </div>
+            <button class="generate-button" id="generateButton">Generate</button>
+            <input type="text" class="result-text" readonly>
+            <button class="generate-button" id="copyButton">Copy to Clipboard</button>
         </form>
     </div>
+    <!-- JavaScript for generating content -->
     <script>
         const partySize4 = document.getElementById("partySize4");
         const partySize8 = document.getElementById("partySize8");
         const textFields = document.querySelectorAll(".text-field input");
+        const generateButton = document.querySelector(".generate-button");
+        const resultText = document.querySelector(".result-text");
 
-        // Initially, set the 2nd column text fields as readonly
+        // Initially, set the 2nd column text fields as readonly and grayed out
         textFields.forEach((textField, index) => {
             if (index % 2 !== 0) {
                 textField.setAttribute("readonly", "readonly");
+                textField.style.backgroundColor = "#333"; // Dark gray background color
             }
         });
 
@@ -176,6 +208,63 @@
             textFields.forEach((textField) => {
                 textField.removeAttribute("readonly");
                 textField.style.backgroundColor = ""; // Reset background color
+            });
+        });
+
+        // Generate content when the button is clicked
+        generateButton.addEventListener("click", () => {
+            // Replace this with your content generation logic
+            resultText.value = "Generated content goes here";
+        });
+
+        const copyButton = document.getElementById("copyButton");
+
+        copyButton.addEventListener("click", () => {
+            // Select the text inside the result text field
+            resultText.select();
+            resultText.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the selected text to the clipboard
+            document.execCommand("copy");
+
+            // Deselect the text
+            resultText.setSelectionRange(0, 0);
+        });
+
+
+
+        document.getElementById("generateButton").addEventListener("click", function () {
+            // Gather form data
+            const player1_name = textField1.value;
+            const player2_name = textField3.value;
+            const player3_name = textField5.value;
+            const player4_name = textField7.value;
+            const player5_name = textField2.value;
+            const player6_name = textField4.value;
+            const player7_name = textField6.value;
+            const player8_name = textField8.value;
+
+            // Create an object from the form data
+            const formDataObject = {};
+            formData.forEach((value, key) => {
+                formDataObject[key] = value;
+            });
+
+            // Send a POST request to your Python server
+            fetch("../Bot/test.py", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ text: player1_name }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from your Python server here
+                console.log(data);
+            })
+            .catch(error => {
+                console.error("Error:", error);
             });
         });
     </script>
