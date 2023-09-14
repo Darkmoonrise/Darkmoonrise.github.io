@@ -77,12 +77,6 @@
             grid-gap: 10px;
         }
 
-        /* Style for readonly text fields */
-        input[readonly] {
-            background-color: #333; /* Dark gray background color */
-            color: #fff; /* White text color */
-        }
-
         /* Style for the Generate button and result text field */
         .generate-button {
             margin: 20px auto;
@@ -96,15 +90,12 @@
 
         .result-text {
             width: 100%;
-            max-width: 400px;
-            height: 100px; /* Increase the height */
-            margin: 20px auto; /* Centered horizontally and separated from other elements */
-            padding: 20px; /* Increase the padding */
+            max-width: 800px;
+            height: 200px; /* Increase the height */
             background-color: #fff; /* White background color */
             color: #333; /* Dark text color */
             border: none;
             border-radius: 5px;
-            text-align: center; /* Center text */
             overflow: auto; /* Add scrolling if content exceeds the height */
         }
     </style>
@@ -170,18 +161,20 @@
                     <input type="text" id="textField8" name="textField8" readonly>
                 </div>
             </div>
-            <button class="generate-button" id="generateButton">Generate</button>
+            <button type='button' class="generate-button" id="generateButton">Generate</button>
             <input type="text" class="result-text" readonly>
-            <button class="generate-button" id="copyButton">Copy to Clipboard</button>
+            <button type='button' class="generate-button" id="copyButton">Copy to Clipboard</button>
         </form>
     </div>
     <!-- JavaScript for generating content -->
     <script>
+        const constrains = document.getElementById("constrains");
         const partySize4 = document.getElementById("partySize4");
         const partySize8 = document.getElementById("partySize8");
         const textFields = document.querySelectorAll(".text-field input");
         const generateButton = document.querySelector(".generate-button");
         const resultText = document.querySelector(".result-text");
+        const copyButton = document.getElementById("copyButton");
 
         // Initially, set the 2nd column text fields as readonly and grayed out
         textFields.forEach((textField, index) => {
@@ -211,14 +204,6 @@
             });
         });
 
-        // Generate content when the button is clicked
-        generateButton.addEventListener("click", () => {
-            // Replace this with your content generation logic
-            resultText.value = "Generated content goes here";
-        });
-
-        const copyButton = document.getElementById("copyButton");
-
         copyButton.addEventListener("click", () => {
             // Select the text inside the result text field
             resultText.select();
@@ -231,40 +216,13 @@
             resultText.setSelectionRange(0, 0);
         });
 
-
-
-        document.getElementById("generateButton").addEventListener("click", function () {
+        generateButton.addEventListener("click", () => {
             // Gather form data
-            const player1_name = textField1.value;
-            const player2_name = textField3.value;
-            const player3_name = textField5.value;
-            const player4_name = textField7.value;
-            const player5_name = textField2.value;
-            const player6_name = textField4.value;
-            const player7_name = textField6.value;
-            const player8_name = textField8.value;
-
-            // Create an object from the form data
-            const formDataObject = {};
-            formData.forEach((value, key) => {
-                formDataObject[key] = value;
-            });
-
-            // Send a POST request to your Python server
-            fetch("../Bot/test.py", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ text: player1_name }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Handle the response from your Python server here
-                console.log(data);
-            })
-            .catch(error => {
-                console.error("Error:", error);
+            console.log(constrains.value);
+            console.log(partySize4.checked);
+            console.log(partySize8.checked);
+            textFields.forEach((textField) => {
+                console.log(textField.value);
             });
         });
     </script>
