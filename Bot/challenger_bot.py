@@ -41,8 +41,8 @@ def get_challenges(challenges, number):
     try_counter = 0
 
     while continue_flag:
-        #shuffle(data)
-        selected = data[26-number:26]
+        shuffle(data)
+        selected = data[0:number]
 
         selected_id = [s["id"] for s in selected]
         incompatibilty_id = list(set([item for sublist in [s["incompatibilty"] for s in selected] for item in sublist]))
@@ -129,11 +129,20 @@ def get_secretChallenge(secret, partySize, player_names):
 
     return ret_str
 
-def generate_challenge(challenge_numberOf, partySize, player_names = [], max_level = 90, with_hard = False):
+def generate_challenge(challenge_numberOf, partySize4, partySize8, player_names = [], with_hard = False):
     i, c, r, s = import_data()
+    max_level = 90
+    if partySize4 == True:
+        partySize = 4
+    elif partySize8 == True:
+        partySize = 8
+    else:
+        partySize = -1
+
+    player_names = player_names[0:partySize]
 
     if not(partySize == 4 or partySize == 8): return "Number of players given (" + str(partySize) + ") not valid. Should be 4 or 8."
-    if len(player_names) != 0 and len(player_names) != partySize: return "Number of player names (" + str(len(player_names)) + ") does not match the party size (" + str(partySize) + ")."
+    #if len(player_names) != 0 and len(player_names) != partySize: return "Number of player names (" + str(len(player_names)) + ") does not match the party size (" + str(partySize) + ")."
     if challenge_numberOf <= 0 or challenge_numberOf > len(c): return "Number of challenges (" + str(challenge_numberOf) + ") not valid. Should be between 1 and " + str(len(c)) + "."
     
     ret_str = "```Welcome to XIV challenge run generator!\n"

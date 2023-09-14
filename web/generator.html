@@ -167,8 +167,9 @@
         </form>
     </div>
     <!-- JavaScript for generating content -->
-    <script>
+    <script src="challenger_bot.js">
         const constrains = document.getElementById("constrains");
+        const hard = document.getElementById("includeHardContent");
         const partySize4 = document.getElementById("partySize4");
         const partySize8 = document.getElementById("partySize8");
         const textFields = document.querySelectorAll(".text-field input");
@@ -222,8 +223,11 @@
             console.log(partySize4.checked);
             console.log(partySize8.checked);
             textFields.forEach((textField) => {
-                console.log(textField.value);
+                textField.value;
             });
+            const playerNames = [textFields[1].value, textFields[3].value, textFields[5].value, textFields[7].value, textFields[2].value, textFields[4].value, textFields[6].value, textFields[8].value];
+
+            console.log(generateChallenge(constrains.value. partySize4.checked, partySize8.checked, playerNames, hard.checked));
         });
     </script>
 </body>
