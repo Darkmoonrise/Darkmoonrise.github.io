@@ -40,13 +40,17 @@ def get_challenges(challenges, number):
     try_counter = 0
 
     while continue_flag:
-        shuffle(data)
-        selected = data[0:number]
+        #shuffle(data)
+        selected = data[26-number:26]
 
         selected_id = [s["id"] for s in selected]
         incompatibilty_id = list(set([item for sublist in [s["incompatibilty"] for s in selected] for item in sublist]))
         
         continue_flag = False
+        
+        if number == 1 and -1 in incompatibilty_id:
+            continue_flag = True;
+
         for id in selected_id:
             if id in incompatibilty_id:
                 continue_flag = True
@@ -114,7 +118,7 @@ def get_secretChallenge(secret, partySize, player_names):
                 if partySize == 4:
                     ret_str += "(order: T->H->D1->D2->T)"
                 else:
-                    ret_str += "(order: T1->H1->D1->D2->T2->H2->D3->D4->T1)"
+                    ret_str += "(order: T1->D1->H1->D2->T2->D3->H2->D4->T1)"
             else:
                 shuffle(player_names)
                 ret_str += "(order: "
@@ -127,17 +131,17 @@ def get_secretChallenge(secret, partySize, player_names):
 def generate_challenge(challenge_numberOf, partySize, player_names = [], max_level = 90, with_hard = False):
     i, c, r, s = import_data()
 
-    if not(partySize == 4 or partySize == 8): return "Number of players given (" + str(partySize) + ") not valid. Should be 4, 8 or 24."
+    if not(partySize == 4 or partySize == 8): return "Number of players given (" + str(partySize) + ") not valid. Should be 4 or 8."
     if len(player_names) != 0 and len(player_names) != partySize: return "Number of player names (" + str(len(player_names)) + ") does not match the party size (" + str(partySize) + ")."
     if challenge_numberOf <= 0 or challenge_numberOf > len(c): return "Number of challenges (" + str(challenge_numberOf) + ") not valid. Should be between 1 and " + str(len(c)) + "."
     
-    ret_str = "```Welcome to the FFXIV challenge run generator!\n"
+    ret_str = "```Welcome to XIV challenge run generator!\n"
     
     inst = get_instances(i, partySize, max_level, with_hard)
     ret_str += "Instance     : " + inst + "\n"
 
     chal, co, to, ho, do = get_challenges(c, challenge_numberOf)
-    if chal == None: return "Failed to find a " + str(challenge_numberOf) + " challenges compatible with each other after 10 tries. Please try to lower the number of challenges."
+    if chal == None: return "Failed to find " + str(challenge_numberOf) + " challenges compatible with each other after 10 tries. Please try to lower the number of challenges."
     ret_str += "Constrain(s) : " + chal[0]  + "\n"
     for c in chal[1:len(chal)]:
         ret_str += "               " + c + "\n"
@@ -180,4 +184,4 @@ def generate_challenge(challenge_numberOf, partySize, player_names = [], max_lev
     return ret_str
 
 
-print(generate_challenge(2, 4, ["Leen", "Dark", "Usas", "Riri"]))
+print(generate_challenge(1, 4, ["Leen", "Dark", "Usas", "Riri"]))
