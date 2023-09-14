@@ -1,17 +1,22 @@
 import json
 from random import *
+import random
+import os
 
 def import_data():
-    with open('instances.json', 'r') as f:
+    with open(os.path.dirname(__file__) + '\\instances.json', 'r') as f:
         instances = json.load(f)
     
-    with open('challenges.json', 'r') as f:
+    with open(os.path.dirname(__file__) + '\\challenges.json', 'r') as f:
         challenges = json.load(f)
 
-    with open('roles.json', 'r') as f:
+    with open(os.path.dirname(__file__) + '\\roles.json', 'r') as f:
         roles = json.load(f)
 
-    return instances, challenges, roles
+    with open(os.path.dirname(__file__) + '\\secret_challenges.json', 'r') as f:
+        secret = json.load(f)
+
+    return instances, challenges, roles, secret
 
 def get_instances(instances, partySize, max_level, with_hard):
     data = instances
@@ -98,10 +103,29 @@ def distribute_roles(roles, names):
 
     return data
     
+def get_secretChallenge(secret, partySize, player_names):
+    ret_str = ""
+    if 1 == random.randint(1, 20):
+        shuffle(secret)
+        d = secret[0]
+        ret_str = d["name"] + " (" + d["description"] + ")"
+        if d["name"] == "Santa":
+            if 0 == len(player_names):
+                if partySize == 4:
+                    ret_str += "(order: T->H->D1->D2->T)"
+                else:
+                    ret_str += "(order: T1->H1->D1->D2->T2->H2->D3->D4->T1)"
+            else:
+                shuffle(player_names)
+                ret_str += "(order: "
+                for p in player_names:
+                    ret_str += p + "->"
+                ret_str += player_names[0] + ")"
 
+    return ret_str
 
 def generate_challenge(challenge_numberOf, partySize, player_names = [], max_level = 90, with_hard = False):
-    i, c, r = import_data()
+    i, c, r, s = import_data()
 
     if not(partySize == 4 or partySize == 8): return "Number of players given (" + str(partySize) + ") not valid. Should be 4, 8 or 24."
     if len(player_names) != 0 and len(player_names) != partySize: return "Number of player names (" + str(len(player_names)) + ") does not match the party size (" + str(partySize) + ")."
@@ -117,6 +141,10 @@ def generate_challenge(challenge_numberOf, partySize, player_names = [], max_lev
     ret_str += "Constrain(s) : " + chal[0]  + "\n"
     for c in chal[1:len(chal)]:
         ret_str += "               " + c + "\n"
+
+    s_text = get_secretChallenge(s, partySize, player_names)
+    if s_text:
+        ret_str += "Secret bonus : " + s_text  + "\n"
 
     if len(player_names) != 0:
         if to:
