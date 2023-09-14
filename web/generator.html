@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to XIV Challenge run generator</title>
+    <style>
+        body {
+            background-color: #0c0c0c;
+            color: #ffffff;
+            font-family: "Final Fantasy XIV Font", sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .title {
+            padding: 20px;
+            font-size: 36px;
+        }
+        .form-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-group {
+            margin: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .form-group label {
+            margin-right: 10px;
+        }
+        .text-field {
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .info-icon {
+            cursor: pointer;
+            position: relative;
+            background-color: #0073e6;
+            color: #fff;
+            width: 20px; /* Smaller circle */
+            height: 20px; /* Smaller circle */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 5px;
+        }
+        .info-icon::before {
+            content: "i";
+            font-weight: bold;
+        }
+        .info-popup {
+            display: none;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            padding: 5px;
+            border-radius: 5px;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+        .form-group:hover .info-popup {
+            display: block;
+        }
+        /* Arrange 8 text fields in a 2x4 grid pattern */
+        .text-field-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            grid-gap: 10px;
+        }
+
+        /* Style for readonly text fields */
+        input[readonly] {
+            background-color: #333; /* Dark gray background color */
+            color: #fff; /* White text color */
+        }
+    </style>
+</head>
+<body>
+    <div class="title">Welcome to XIV Challenge run generator</div>
+    <div class="form-container">
+        <form>
+            <div class="form-group">
+                <label for="constrains">Choose the number of constrain(s):</label>
+                <select id="constrains" name="constrains">
+                    <option value="1">1</option>
+                    <option value="2" selected>2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="partySize">Party size:</label>
+                <input type="radio" id="partySize4" name="partySize" value="4" checked>
+                <label for="partySize4">4</label>
+                <input type="radio" id="partySize8" name="partySize" value="8">
+                <label for="partySize8">8</label>
+            </div>
+            <div class="form-group">
+                <label for="includeHardContent">Include hard content:</label>
+                <input type="checkbox" id="includeHardContent" name="includeHardContent">
+                <span class="info-icon">
+                    <span class="info-popup">Will include extreme and savage content</span>
+                </span>
+            </div>
+            <div class="form-group">
+                <label for="playerNames">Player names:</label>
+                <span class="info-icon">
+                    <span class="info-popup">If given, the generator will tell you who needs to play what</span>
+                </span>
+            </div>
+            <!-- Arrange 8 text fields in a 2x4 grid pattern -->
+            <div class="text-field-container">
+                <div class="text-field">
+                    <input type="text" id="textField1" name="textField1">
+                </div>
+                <div class="text-field">
+                    <input type="text" id="textField2" name="textField2" readonly>
+                </div>
+                <div class="text-field">
+                    <input type="text" id="textField3" name="textField3">
+                </div>
+                <div class="text-field">
+                    <input type="text" id="textField4" name="textField4" readonly>
+                </div>
+                <div class="text-field">
+                    <input type="text" id="textField5" name="textField5">
+                </div>
+                <div class="text-field">
+                    <input type="text" id="textField6" name="textField6" readonly>
+                </div>
+                <div class="text-field">
+                    <input type="text" id="textField7" name="textField7">
+                </div>
+                <div class="text-field">
+                    <input type="text" id="textField8" name="textField8" readonly>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        const partySize4 = document.getElementById("partySize4");
+        const partySize8 = document.getElementById("partySize8");
+        const textFields = document.querySelectorAll(".text-field input");
+
+        // Initially, set the 2nd column text fields as readonly
+        textFields.forEach((textField, index) => {
+            if (index % 2 !== 0) {
+                textField.setAttribute("readonly", "readonly");
+            }
+        });
+
+        // Add event listeners to radio buttons to enable/disable text fields
+        partySize4.addEventListener("change", () => {
+            textFields.forEach((textField, index) => {
+                if (index % 2 === 0) {
+                    textField.removeAttribute("readonly");
+                    textField.style.backgroundColor = ""; // Reset background color
+                } else {
+                    textField.setAttribute("readonly", "readonly");
+                    textField.style.backgroundColor = "#333"; // Dark gray background color
+                }
+            });
+        });
+
+        partySize8.addEventListener("change", () => {
+            textFields.forEach((textField) => {
+                textField.removeAttribute("readonly");
+                textField.style.backgroundColor = ""; // Reset background color
+            });
+        });
+    </script>
+</body>
+</html>
