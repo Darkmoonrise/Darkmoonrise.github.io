@@ -1,17 +1,8 @@
-function getJson(path) {
-    fetch(path)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-                return response.json(); // Parse the response as JSON
-            })
-        .then(data => {
-            return data;
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
+async function getJson(path) {
+    const response = await fetch(path);
+    const jsonData = await response.json();
+    
+    return jsonData;
 }
 
 

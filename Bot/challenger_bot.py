@@ -3,16 +3,16 @@ from random import *
 import random
 
 def import_data():
-    with open('instances.json', 'r') as f:
+    with open('..\instances.json', 'r') as f:
         instances = json.load(f)
     
-    with open('challenges.json', 'r') as f:
+    with open('..\challenges.json', 'r') as f:
         challenges = json.load(f)
 
-    with open('roles.json', 'r') as f:
+    with open('..\roles.json', 'r') as f:
         roles = json.load(f)
 
-    with open('secret_challenges.json', 'r') as f:
+    with open('..\secret_challenges.json', 'r') as f:
         secret = json.load(f)
 
     return instances, challenges, roles, secret
