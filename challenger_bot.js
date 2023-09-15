@@ -153,8 +153,6 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
     const maxLevel = 90;
     let partySize;
 
-    console.log(playerNames);
-
     if (partySize4) {
         partySize = 4;
     } else if (partySize8) {
@@ -164,7 +162,6 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
     }
 
     playerNames = playerNames.slice(0, partySize);
-    console.log(playerNames);
 
     if (!(partySize === 4 || partySize === 8)) {
         return `Number of players given (${partySize}) not valid. Should be 4 or 8.`;
@@ -189,7 +186,21 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
         retStr += `Secret bonus : ${sText}\r\n`;
     }
 
-    if (playerNames[0].length !== 0) {
+    let printRole = false;
+    for (let i = 0; i < playerNames.length; i++) {
+        if (playerNames[i].length !== 0)
+        {
+            printRole = true;
+        }
+    }
+    if (printRole) {
+        for (let i = 0; i < playerNames.length; i++) {
+            if (playerNames[i].length == 0)
+            {
+                playerNames[i] = `player${i+1}`;
+            }
+        }
+
         let tn, hn, dn;
         if (tankOnly) {
             tn = partySize;
