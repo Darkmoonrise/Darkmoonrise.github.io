@@ -121,7 +121,7 @@
             </div>
             <div class="form-group">
                 <label for="partySize">Party size:</label>
-                <input type="radio" id="partySize4" name="partySize" value="4" checked>
+                <input type="radio" id="partySize4" name="partySize" value="4">
                 <label for="partySize4">4</label>
                 <input type="radio" id="partySize8" name="partySize" value="8">
                 <label for="partySize8">8</label>
@@ -166,7 +166,10 @@
                     <input type="text" id="textField8" name="textField8" readonly>
                 </div>
             </div>
-            <button type='button' class="generate-button" id="generateButton">Generate</button>
+            <div class="form-group2">
+                <button type='button' class="generate-button" id="generateButton">Generate</button>
+                <button type='button' class="generate-button" id="ResetButton">Reset</button>
+            </div>
             <textArea type="text" class="result-text" id ="result" readonly></textArea>
             <div class="form-group2">
                 <button type='button' class="generate-button" id="copyButton">Copy to Clipboard</button>
@@ -192,17 +195,18 @@
         const p6 = document.getElementById("textField4");
         const p7 = document.getElementById("textField6");
         const p8 = document.getElementById("textField8");
-        const generateButton = document.querySelector(".generate-button");
+        const generateButton = document.getElementById("generateButton");
+        const resetButton = document.getElementById("ResetButton");
         const resultText = document.getElementById("result");
         const copyButton = document.getElementById("copyButton");
 
         // Initially, set the 2nd column text fields as readonly and grayed out
-        textFields.forEach((textField, index) => {
-            if (index % 2 !== 0) {
-                textField.setAttribute("readonly", "readonly");
-                textField.style.backgroundColor = "#555"; // Dark gray background color
-            }
-        });
+        // textFields.forEach((textField, index) => {
+        //     if (index % 2 !== 0) {
+        //         textField.setAttribute("readonly", "readonly");
+        //         textField.style.backgroundColor = "#555"; // Dark gray background color
+        //     }
+        // });
 
         // Add event listeners to radio buttons to enable/disable text fields
         partySize4.addEventListener("change", () => {
@@ -236,12 +240,104 @@
             resultText.setSelectionRange(0, 0);
         });
 
+        document.addEventListener("DOMContentLoaded", onDOMReady);
+
+        function saveContent() {
+            textFields.forEach((textField) => {
+                localStorage.setItem(textField.name, textField.value);
+            });
+
+            localStorage.setItem(constrains.name, constrains.value);
+            localStorage.setItem('ps_local4', partySize4.checked);
+            localStorage.setItem('ps_local8', partySize8.checked);
+            localStorage.setItem(hard.name, hard.checked);
+
+            console.log(localStorage.getItem('ps_local4'));
+            console.log(localStorage.getItem('ps_local8'));
+        }
+
+        function onDOMReady() {
+            setDefault();
+            if (localStorage.getItem(constrains.name) !== null)
+            {
+                constrains.value = localStorage.getItem(constrains.name);
+            }
+
+            if (localStorage.getItem('ps_local4') !== null)
+            {
+                partySize4.checked = localStorage.getItem('ps_local4').toLowerCase() === "true";
+            }
+
+            if (localStorage.getItem('ps_local8') !== null)
+            {
+                partySize8.checked = localStorage.getItem('ps_local8').toLowerCase() === "true";
+            }
+
+            if (localStorage.getItem(hard.name) !== null)
+            {
+                hard.checked = localStorage.getItem(hard.name).toLowerCase() === "true";
+            }
+
+            textFields.forEach((textField, index) => {
+                if (localStorage.getItem(textField.name) !== null)
+                {
+                    textField.value = localStorage.getItem(textField.name);
+                }
+                if(partySize4.checked) {
+                    if (index % 2 === 0) {
+                        textField.removeAttribute("readonly");
+                        textField.style.backgroundColor = ""; // Reset background color
+                    } else {
+                        textField.setAttribute("readonly", "readonly");
+                        textField.style.backgroundColor = "#555"; // Dark gray background color
+                    }
+                }
+                else
+                {
+                    textField.removeAttribute("readonly");
+                    textField.style.backgroundColor = ""; // Reset background color
+                }
+            });
+
+        }
+
+        function setDefault() {
+            textFields.forEach((textField, index) => {
+                textField.value = "";
+                if (index % 2 !== 0) {
+                    textField.setAttribute("readonly", "readonly");
+                    textField.style.backgroundColor = "#555"; // Dark gray background color
+                }
+            });
+            constrains.value = '2';
+            partySize4.checked = true;
+            partySize8.checked = false;
+            hard.checked = false;
+        }
+
+        function onPageClose(event) {
+            saveContent();
+        }
+
+        resetButton.addEventListener("click", () => {
+            setDefault();
+
+            textFields.forEach((textField) => {
+                localStorage.removeItem(textField.name);
+            });
+
+            localStorage.removeItem(constrains.name);
+            localStorage.removeItem('ps_local4');
+            localStorage.removeItem('ps_local8');
+            localStorage.removeItem(hard.name);
+        });
+
         generateButton.addEventListener("click", async () => {
             const playerNames = [p1.value, p2.value, p3.value, p4.value, p5.value, p6.value, p7.value, p8.value];
 
             const res = await generateChallenge(constrains.value, partySize4.checked, partySize8.checked, playerNames, hard.checked);
             resultText.value = res;
-            console.log(res);
+            saveContent();
         });
     </script>
 </body>
