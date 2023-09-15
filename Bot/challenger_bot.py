@@ -1,20 +1,18 @@
 import json
 from random import *
 import random
-import os
-from flask import Flask, request, jsonify
 
 def import_data():
-    with open(os.path.dirname(__file__) + '\\instances.json', 'r') as f:
+    with open('instances.json', 'r') as f:
         instances = json.load(f)
     
-    with open(os.path.dirname(__file__) + '\\challenges.json', 'r') as f:
+    with open('challenges.json', 'r') as f:
         challenges = json.load(f)
 
-    with open(os.path.dirname(__file__) + '\\roles.json', 'r') as f:
+    with open('roles.json', 'r') as f:
         roles = json.load(f)
 
-    with open(os.path.dirname(__file__) + '\\secret_challenges.json', 'r') as f:
+    with open('secret_challenges.json', 'r') as f:
         secret = json.load(f)
 
     return instances, challenges, roles, secret
@@ -129,7 +127,7 @@ def get_secretChallenge(secret, partySize, player_names):
 
     return ret_str
 
-def generate_challenge(challenge_numberOf, partySize4, partySize8, player_names = [], with_hard = False):
+def generate_challenge(challenge_numberOf, partySize4, partySize8, player_names, with_hard):
     i, c, r, s = import_data()
     max_level = 90
     if partySize4 == True:
@@ -139,18 +137,17 @@ def generate_challenge(challenge_numberOf, partySize4, partySize8, player_names 
     else:
         partySize = -1
 
-    player_names = player_names[0:partySize]
+    if len(player_names[0]) != 0:
+        player_names = player_names[0:partySize]
+    else:
+        player_names = []
 
-    if not(partySize == 4 or partySize == 8): return "Number of players given (" + str(partySize) + ") not valid. Should be 4 or 8."
-    #if len(player_names) != 0 and len(player_names) != partySize: return "Number of player names (" + str(len(player_names)) + ") does not match the party size (" + str(partySize) + ")."
-    if challenge_numberOf <= 0 or challenge_numberOf > len(c): return "Number of challenges (" + str(challenge_numberOf) + ") not valid. Should be between 1 and " + str(len(c)) + "."
-    
     ret_str = "```Welcome to XIV challenge run generator!\n"
     
     inst = get_instances(i, partySize, max_level, with_hard)
     ret_str += "Instance     : " + inst + "\n"
 
-    chal, co, to, ho, do = get_challenges(c, challenge_numberOf)
+    chal, classonly, tankonly, healonly, dpsonly = get_challenges(c, challenge_numberOf)
     if chal == None: return "Failed to find " + str(challenge_numberOf) + " challenges compatible with each other after 10 tries. Please try to lower the number of challenges."
     ret_str += "Constrain(s) : " + chal[0]  + "\n"
     for c in chal[1:len(chal)]:
@@ -161,15 +158,15 @@ def generate_challenge(challenge_numberOf, partySize4, partySize8, player_names 
         ret_str += "Secret bonus : " + s_text  + "\n"
 
     if len(player_names) != 0:
-        if to:
+        if tankonly:
             tn = partySize
             hn = 0
             dn = 0
-        elif ho:
+        elif healonly:
             tn = 0
             hn = partySize
             dn = 0
-        elif do:
+        elif dpsonly:
             tn = 0
             hn = 0
             dn = partySize
@@ -182,7 +179,7 @@ def generate_challenge(challenge_numberOf, partySize4, partySize8, player_names 
             hn = 2
             dn = 4
   
-        role = get_roles(r, tn, hn, dn, co)
+        role = get_roles(r, tn, hn, dn, classonly)
         role = distribute_roles(role, player_names)
 
         ret_str += "Composition  : " + role[0] + "\n"
@@ -192,6 +189,3 @@ def generate_challenge(challenge_numberOf, partySize4, partySize8, player_names 
     ret_str += "```"
 
     return ret_str
-
-
-print(generate_challenge(1, 4, ["Leen", "Dark", "Usas", "Riri"]))

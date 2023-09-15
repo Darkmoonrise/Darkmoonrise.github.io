@@ -1,24 +1,13 @@
 const fs = require('fs');
 
-// Function to import data from JSON files
 function importData() {
-    const instances = JSON.parse(fs.readFileSync(__dirname + '/instances.json', 'utf8'));
-    const challenges = JSON.parse(fs.readFileSync(__dirname + '/challenges.json', 'utf8'));
-    const roles = JSON.parse(fs.readFileSync(__dirname + '/roles.json', 'utf8'));
-    const secret = JSON.parse(fs.readFileSync(__dirname + '/secret_challenges.json', 'utf8'));
-
-    return { instances, challenges, roles, secret };
+    const instances = JSON.parse(fs.readFileSync('instances.json', 'utf8'));
+    const challenges = JSON.parse(fs.readFileSync('challenges.json', 'utf8'));
+    const roles = JSON.parse(fs.readFileSync('roles.json', 'utf8'));
+    const secret = JSON.parse(fs.readFileSync('secret_challenges.json', 'utf8'));
+    return [instances, challenges, roles, secret];
 }
 
-// Function to shuffle an array in-place
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
-
-// Function to get instances
 function getInstances(instances, partySize, maxLevel, withHard) {
     let data = instances;
     data = data.filter(d => d.partySize === partySize);
@@ -26,14 +15,11 @@ function getInstances(instances, partySize, maxLevel, withHard) {
     if (!withHard) {
         data = data.filter(d => d.difficulty === "normal");
     }
-
     data = data.map(d => `${d.name} (${d.type} lvl ${d.level})`);
-    shuffleArray(data);
-
+    shuffle(data);
     return data[0];
 }
 
-// Function to get challenges
 function getChallenges(challenges, number) {
     let data = challenges;
     let classOnly = false;
@@ -44,27 +30,27 @@ function getChallenges(challenges, number) {
     let tryCounter = 0;
 
     while (continueFlag) {
-        shuffleArray(data);
+        shuffle(data);
         const selected = data.slice(0, number);
 
-        const selectedIds = selected.map(s => s.id);
-        const incompatibilityIds = [...new Set(selected.flatMap(s => s.incompatibility))];
+        const selectedId = selected.map(s => s.id);
+        const incompatibilityId = [...new Set(selected.flatMap(s => s.incompatibility))];
 
         continueFlag = false;
 
-        if (number === 1 && incompatibilityIds.includes(-1)) {
+        if (number === 1 && incompatibilityId.includes(-1)) {
             continueFlag = true;
         }
 
-        for (const id of selectedIds) {
-            if (incompatibilityIds.includes(id)) {
+        for (const id of selectedId) {
+            if (incompatibilityId.includes(id)) {
                 continueFlag = true;
                 break;
             }
         }
 
-        tryCounter++;
-        if (continueFlag === true && tryCounter > 10) {
+        tryCounter += 1;
+        if (continueFlag && tryCounter > 10) {
             return [null, null, null, null, null];
         }
     }
@@ -89,7 +75,6 @@ function getChallenges(challenges, number) {
     return [nice, classOnly, tankOnly, healOnly, dpsOnly];
 }
 
-// Function to get roles
 function getRoles(roles, tank, healer, dps, classOnly) {
     let data = roles;
     if (classOnly) {
@@ -106,18 +91,17 @@ function getRoles(roles, tank, healer, dps, classOnly) {
     while (h.length < healer + 1) h.push(...h);
     while (d.length < dps + 1) d.push(...d);
 
-    shuffleArray(t);
-    shuffleArray(h);
-    shuffleArray(d);
+    shuffle(t);
+    shuffle(h);
+    shuffle(d);
 
     data = t.slice(0, tank).concat(h.slice(0, healer), d.slice(0, dps));
 
     return data;
 }
 
-// Function to distribute roles
 function distributeRoles(roles, names) {
-    shuffleArray(names);
+    shuffle(names);
 
     const data = [];
     for (let i = 0; i < roles.length; i++) {
@@ -127,71 +111,80 @@ function distributeRoles(roles, names) {
     return data;
 }
 
-// Function to get a secret challenge
 function getSecretChallenge(secret, partySize, playerNames) {
     let retStr = "";
-    if (Math.random() < 0.05) {
-        shuffleArray(secret);
+    if (Math.floor(Math.random() * 20) + 1 === 1) {
+        shuffle(secret);
         const d = secret[0];
         retStr = `${d.name} (${d.description})`;
-        if (d.name === "Santa") {
-            if (playerNames.length === 0) {
-                if (partySize === 4) {
-                    retStr += "(order: T->H->D1->D2->T)";
-                } else {
-                    retStr += "(order: T1->D1->H1->D2->T2->D3->H2->D4->T1)";
-                }
+        if (playerNames.length === 0) {
+            if (partySize === 4) {
+                retStr += "(order: T->H->D1->D2->T)";
             } else {
-                shuffleArray(playerNames);
-                retStr += "(order: ";
-                for (const p of playerNames) {
-                    retStr += `${p}->`;
-                }
-                retStr += `${playerNames[0]})`;
+                retStr += "(order: T1->D1->H1->D2->T2->D3->H2->D4->T1)";
             }
+        } else {
+            shuffle(playerNames);
+            retStr += "(order: ";
+            for (const p of playerNames) {
+                retStr += `${p}->`;
+            }
+            retStr += `${playerNames[0]})`;
         }
     }
 
     return retStr;
 }
 
-// Function to generate a challenge
-function generateChallenge(challengeNumberOf, partySize4, partySize8, playerNames = [], withHard = false) {
-    const { instances, challenges, roles, secret } = importData();
+function generateChallenge(challengeNumberOf, partySize4, partySize8, playerNames, withHard) {
+    const [i, c, r, s] = importData();
     const maxLevel = 90;
-    const partySize = partySize4 ? 4 : (partySize8 ? 8 : -1);
-    playerNames = playerNames.slice(0, partySize);
+    let partySize;
 
-    if (!(partySize === 4 || partySize === 8)) return `Number of players given (${partySize}) not valid. Should be 4 or 8.`;
+    if (partySize4) {
+        partySize = 4;
+    } else if (partySize8) {
+        partySize = 8;
+    } else {
+        partySize = -1;
+    }
 
-    retStr = "```Welcome to XIV challenge run generator!\n";
+    playerNames = playerNames[0].slice(0, partySize);
 
-    const inst = getInstances(instances, partySize, maxLevel, withHard);
+    if (!(partySize === 4 || partySize === 8)) {
+        return `Number of players given (${partySize}) not valid. Should be 4 or 8.`;
+    }
+
+    const retStr = "```Welcome to XIV challenge run generator!\n";
+
+    const inst = getInstances(i, partySize, maxLevel, withHard);
     retStr += `Instance     : ${inst}\n`;
 
-    const [chal, co, to, ho, dpso] = getChallenges(challenges, challengeNumberOf);
-    if (chal === null) return `Failed to find ${challengeNumberOf} challenges compatible with each other after 10 tries. Please try to lower the number of challenges.`;
+    const [chal, classOnly, tankOnly, healOnly, dpsOnly] = getChallenges(c, challengeNumberOf);
+    if (!chal) {
+        return `Failed to find ${challengeNumberOf} challenges compatible with each other after 10 tries. Please try to lower the number of challenges.`;
+    }
     retStr += `Constrain(s) : ${chal[0]}\n`;
     for (let i = 1; i < chal.length; i++) {
         retStr += `               ${chal[i]}\n`;
     }
 
-    const sText = getSecretChallenge(secret, partySize, playerNames);
+    const sText = getSecretChallenge(s, partySize, playerNames);
     if (sText) {
         retStr += `Secret bonus : ${sText}\n`;
     }
 
     if (playerNames.length !== 0) {
         let tn, hn, dn;
-        if (to) {
+        if (tankOnly) {
             tn = partySize;
             hn = 0;
             dn = 0;
-        } else if (ho) {
+        } else if (healOnly) {
             tn = 0;
             hn = partySize;
             dn = 0;
-        } else if (dpso) {
+        } else if (dpsOnly) {
             tn = 0;
             hn = 0;
             dn = partySize;
@@ -205,7 +198,7 @@ function generateChallenge(challengeNumberOf, partySize4, partySize8, playerName
             dn = 4;
         }
 
-        const role = getRoles(roles, tn, hn, dn, co);
+        const role = getRoles(r, tn, hn, dn, classOnly);
         const distributedRoles = distributeRoles(role, playerNames);
 
         retStr += `Composition  : ${distributedRoles[0]}\n`;
@@ -218,7 +211,3 @@ function generateChallenge(challengeNumberOf, partySize4, partySize8, playerName
 
     return retStr;
 }
-
-// Example usage
-const result = generateChallenge(3, true, false, ["Player1", "Player2", "Player3", "Player4", "Player5", "Player6", "Player7", "Player8"]);
-console.log(result);
