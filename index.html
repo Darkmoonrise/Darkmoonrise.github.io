@@ -111,7 +111,7 @@
         <form>
             <div class="form-group">
                 <label for="constrains">Choose the number of constrain(s):</label>
-                <select id="constrains" name="constrains">
+                <select id="constrains" name="constrains" tabindex="1">
                     <option value="1">1</option>
                     <option value="2" selected>2</option>
                     <option value="3">3</option>
@@ -119,16 +119,16 @@
                     <option value="5">5</option>
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group" >
                 <label for="partySize">Party size:</label>
-                <input type="radio" id="partySize4" name="partySize" value="4">
+                <input type="radio" id="partySize4" name="partySize" value="4" tabindex="2">
                 <label for="partySize4">4</label>
-                <input type="radio" id="partySize8" name="partySize" value="8">
+                <input type="radio" id="partySize8" name="partySize" value="8" tabindex="2">
                 <label for="partySize8">8</label>
             </div>
             <div class="form-group">
                 <label for="includeHardContent">Include hard content:</label>
-                <input type="checkbox" id="includeHardContent" name="includeHardContent">
+                <input type="checkbox" id="includeHardContent" name="includeHardContent" tabindex="3">
                 <span class="info-icon">
                     <span class="info-popup">Will include extreme and savage content</span>
                 </span>
@@ -142,37 +142,37 @@
             <!-- Arrange 8 text fields in a 2x4 grid pattern -->
             <div class="text-field-container">
                 <div class="text-field">
-                    <input type="text" id="textField1" name="textField1">
+                    <input type="text" id="textField1" name="textField1" tabindex="4">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField2" name="textField2" readonly>
+                    <input type="text" id="textField2" name="textField2" tabindex="8">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField3" name="textField3">
+                    <input type="text" id="textField3" name="textField3" tabindex="5">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField4" name="textField4" readonly>
+                    <input type="text" id="textField4" name="textField4" tabindex="9">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField5" name="textField5">
+                    <input type="text" id="textField5" name="textField5" tabindex="6">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField6" name="textField6" readonly>
+                    <input type="text" id="textField6" name="textField6" tabindex="10">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField7" name="textField7">
+                    <input type="text" id="textField7" name="textField7" tabindex="7">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField8" name="textField8" readonly>
+                    <input type="text" id="textField8" name="textField8" tabindex="11">
                 </div>
             </div>
             <div class="form-group2">
-                <button type='button' class="generate-button" id="generateButton">Generate</button>
-                <button type='button' class="generate-button" id="ResetButton">Reset</button>
+                <button type='button' class="generate-button" id="generateButton" tabindex="12">Generate</button>
+                <button type='button' class="generate-button" id="ResetButton" tabindex="99">Reset</button>
             </div>
-            <textArea type="text" class="result-text" id ="result" readonly></textArea>
+            <textArea type="text" class="result-text" id ="result" tabindex="99" readonly></textArea>
             <div class="form-group2">
-                <button type='button' class="generate-button" id="copyButton">Copy to Clipboard</button>
+                <button type='button' class="generate-button" id="copyButton" tabindex="13">Copy to Clipboard</button>
                 <span class="info-icon">
                     <span class="info-popup">This is discord ready, just click the button and paste in discord.</span>
                 </span>
@@ -199,6 +199,7 @@
         const resetButton = document.getElementById("ResetButton");
         const resultText = document.getElementById("result");
         const copyButton = document.getElementById("copyButton");
+        const fieldTabIndex = ["4", "8", "5", "9", "6", "10", "7", "11"];
 
         // Initially, set the 2nd column text fields as readonly and grayed out
         // textFields.forEach((textField, index) => {
@@ -213,17 +214,20 @@
             textFields.forEach((textField, index) => {
                 if (index % 2 === 0) {
                     textField.removeAttribute("readonly");
+                    textField.setAttribute("tabindex", fieldTabIndex[index]);
                     textField.style.backgroundColor = ""; // Reset background color
                 } else {
                     textField.setAttribute("readonly", "readonly");
+                    textField.setAttribute("tabindex", "99");
                     textField.style.backgroundColor = "#555"; // Dark gray background color
                 }
             });
         });
 
         partySize8.addEventListener("change", () => {
-            textFields.forEach((textField) => {
+            textFields.forEach((textField, index) => {
                 textField.removeAttribute("readonly");
+                textField.setAttribute("tabindex", fieldTabIndex[index]);
                 textField.style.backgroundColor = ""; // Reset background color
             });
         });
@@ -286,15 +290,18 @@
                 if(partySize4.checked) {
                     if (index % 2 === 0) {
                         textField.removeAttribute("readonly");
+                        textField.setAttribute("tabindex", fieldTabIndex[index]);
                         textField.style.backgroundColor = ""; // Reset background color
                     } else {
                         textField.setAttribute("readonly", "readonly");
+                        textField.setAttribute("tabindex", "99");
                         textField.style.backgroundColor = "#555"; // Dark gray background color
                     }
                 }
                 else
                 {
                     textField.removeAttribute("readonly");
+                    textField.setAttribute("tabindex", fieldTabIndex[index]);
                     textField.style.backgroundColor = ""; // Reset background color
                 }
             });
@@ -306,6 +313,7 @@
                 textField.value = "";
                 if (index % 2 !== 0) {
                     textField.setAttribute("readonly", "readonly");
+                    textField.setAttribute("tabindex", "99");
                     textField.style.backgroundColor = "#555"; // Dark gray background color
                 }
             });
