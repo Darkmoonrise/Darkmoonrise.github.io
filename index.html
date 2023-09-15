@@ -173,6 +173,14 @@
         const partySize4 = document.getElementById("partySize4");
         const partySize8 = document.getElementById("partySize8");
         const textFields = document.querySelectorAll(".text-field input");
+        const p1 = document.getElementById("textField1");
+        const p2 = document.getElementById("textField3");
+        const p3 = document.getElementById("textField5");
+        const p4 = document.getElementById("textField7");
+        const p5 = document.getElementById("textField2");
+        const p6 = document.getElementById("textField4");
+        const p7 = document.getElementById("textField6");
+        const p8 = document.getElementById("textField8");
         const generateButton = document.querySelector(".generate-button");
         const resultText = document.querySelector(".result-text");
         const copyButton = document.getElementById("copyButton");
@@ -219,15 +227,10 @@
 
         generateButton.addEventListener("click", () => {
             // Gather form data
-            console.log(constrains.value);
-            console.log(partySize4.checked);
-            console.log(partySize8.checked);
-            textFields.forEach((textField) => {
-                textField.value;
-            });
-            const playerNames = [textFields[1].value, textFields[3].value, textFields[5].value, textFields[7].value, textFields[2].value, textFields[4].value, textFields[6].value, textFields[8].value];
+            console.log("Blarg");
+            // const playerNames = [p1.value, p2.value, p3.value, p4.value, p5.value, p6.value, p7.value, p8.value]
 
-            console.log(generateChallenge(constrains.value. partySize4.checked, partySize8.checked, playerNames, hard.checked));
+            // console.log(generateChallenge(constrains.value. partySize4.checked, partySize8.checked, playerNames, hard.checked));
         });
     </script>
 </body>
