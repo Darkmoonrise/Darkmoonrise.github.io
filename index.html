@@ -28,6 +28,11 @@
             display: flex;
             align-items: center;
         }
+        .form-group2 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         .form-group label {
             margin-right: 10px;
         }
@@ -42,8 +47,8 @@
             position: relative;
             background-color: #0073e6;
             color: #fff;
-            width: 17px; /* Smaller circle */
-            height: 17px; /* Smaller circle */
+            width: 20px; /* Smaller circle */
+            height: 20px; /* Smaller circle */
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -52,7 +57,7 @@
         }
         .info-icon::before {
             content: "i";
-            
+            font-weight: bold;  
         }
         .info-popup {
             display: none;
@@ -79,7 +84,7 @@
 
         /* Style for the Generate button and result text field */
         .generate-button {
-            margin: 20px auto;
+            margin: 20px 20px;
             padding: 10px 20px;
             background-color: #0073e6;
             color: #fff;
@@ -163,7 +168,12 @@
             </div>
             <button type='button' class="generate-button" id="generateButton">Generate</button>
             <textArea type="text" class="result-text" id ="result" readonly></textArea>
-            <button type='button' class="generate-button" id="copyButton">Copy to Clipboard</button>
+            <div class="form-group2">
+                <button type='button' class="generate-button" id="copyButton">Copy to Clipboard</button>
+                <span class="info-icon">
+                    <span class="info-popup">This is discord ready, just click the button and paste in discord.</span>
+                </span>
+            </div>
         </form>
     </div>
     <!-- JavaScript for generating content -->
