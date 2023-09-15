@@ -1,9 +1,19 @@
-async function getJson(path) {
+function getJson(path) {
     let rawdata;
 
-    const response = await fetch(path);
-    const jsonData = await response.json();
-    jsonData.then(data => {rawdata = data;});
+    fetch(path)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+                return response.json(); // Parse the response as JSON
+            })
+        .then(data => {
+            rawdata = data;
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
     
     return rawdata;
 }
