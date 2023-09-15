@@ -7,7 +7,6 @@ function getJson(path) {
                 return response.json(); // Parse the response as JSON
             })
         .then(data => {
-            console.log(data);
             return data;
         })
         .catch(error => {
@@ -24,8 +23,7 @@ function importData() {
     return [instances, challenges, roles, secret];
 }
 
-function getInstances(instances, partySize, maxLevel, withHard) {
-    let data = instances;
+function getInstances(data, partySize, maxLevel, withHard) {
     data = data.filter(d => d.partySize === partySize);
     data = data.filter(d => d.level <= maxLevel);
     if (!withHard) {
