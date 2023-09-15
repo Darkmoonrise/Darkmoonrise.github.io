@@ -3,7 +3,7 @@ async function getJson(path) {
 
     const response = await fetch(path);
     const jsonData = await response.json();
-    json.then(data => {rawdata = data;});
+    jsonData.then(data => {rawdata = data;});
     
     return rawdata;
 }
