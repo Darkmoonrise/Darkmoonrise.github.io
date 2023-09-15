@@ -96,12 +96,13 @@
         .result-text {
             width: 100%;
             max-width: 800px;
-            height: 200px; /* Increase the height */
+            height: 100px; /* Increase the height */
             background-color: #fff; /* White background color */
             color: #333; /* Dark text color */
             border: none;
             border-radius: 5px;
             overflow: auto; /* Add scrolling if content exceeds the height */
+            resize: none;
         }
     </style>
 </head>
@@ -118,6 +119,9 @@
                     <option value="4">4</option>
                     <option value="5">5</option>
                 </select>
+                <span class="info-icon">
+                    <span class="info-popup">Depending on the constrain(s) selected you may need to enable the option "Unrestricted party".<br>If you do so, also enable the "Level sync" option.</span>
+                </span>
             </div>
             <div class="form-group" >
                 <label for="partySize">Party size:</label>
@@ -170,11 +174,11 @@
                 <button type='button' class="generate-button" id="generateButton" tabindex="12">Generate</button>
                 <button type='button' class="generate-button" id="ResetButton" tabindex="99">Reset</button>
             </div>
-            <textArea type="text" class="result-text" id ="result" tabindex="99" readonly></textArea>
+            <textArea type="text" class="result-text" id ="result" tabindex="99" readonly>This text area is not inteded to be read, just to validate the generation of the challenge. Copy paste it to discord to discover the challenge at the same time than your mates</textArea>
             <div class="form-group2">
                 <button type='button' class="generate-button" id="copyButton" tabindex="13">Copy to Clipboard</button>
                 <span class="info-icon">
-                    <span class="info-popup">This is discord ready, just click the button and paste in discord.</span>
+                    <span class="info-popup">This is discord ready. Just click the button and paste in discord.</span>
                 </span>
             </div>
         </form>
