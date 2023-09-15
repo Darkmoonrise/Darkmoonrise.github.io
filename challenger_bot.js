@@ -6,10 +6,10 @@ async function getJson(path) {
 
 
 async function importData() {
-    const instances = await getJson('instances.json');
-    const challenges = await getJson('challenges.json');
-    const roles = await getJson('roles.json');
-    const secret = await getJson('secret_challenges.json');
+    const instances = await getJson('https://darkmoonrise.github.io/instances.json');
+    const challenges = await getJson('https://darkmoonrise.github.io/challenges.json');
+    const roles = await getJson('https://darkmoonrise.github.io/roles.json');
+    const secret = await getJson('https://darkmoonrise.github.io/secret_challenges.json');
     return [instances, challenges, roles, secret];
 }
 
@@ -167,7 +167,7 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
         return `Number of players given (${partySize}) not valid. Should be 4 or 8.`;
     }
 
-    retStr = "```Welcome to XIV challenge run generator!\r\n";
+    retStr = "Welcome to XIV challenge run generator!\r\n";
 
     const inst = getInstances(i, partySize, maxLevel, withHard);
     retStr += `Instance     : ${inst}\r\n`;
@@ -232,8 +232,6 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
             retStr += `               ${distributedRoles[i]}\r\n`;
         }
     }
-
-    retStr += "```";
 
     return retStr;
 }
