@@ -1,10 +1,8 @@
-const fs = require('fs');
-
 function importData() {
-    const instances = JSON.parse(fs.readFileSync('instances.json', 'utf8'));
-    const challenges = JSON.parse(fs.readFileSync('challenges.json', 'utf8'));
-    const roles = JSON.parse(fs.readFileSync('roles.json', 'utf8'));
-    const secret = JSON.parse(fs.readFileSync('secret_challenges.json', 'utf8'));
+    const instances = JSON.parse('instances.json');
+    const challenges = JSON.parse('challenges.json');
+    const roles = JSON.parse('roles.json');
+    const secret = JSON.parse('secret_challenges.json');
     return [instances, challenges, roles, secret];
 }
 
