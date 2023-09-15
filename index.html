@@ -94,8 +94,8 @@
         }
 
         .result-text {
-            width: 100%;
-            max-width: 800px;
+            width: 70%;
+            max-width: 400px;
             height: 100px; /* Increase the height */
             background-color: #fff; /* White background color */
             color: #333; /* Dark text color */
@@ -174,12 +174,10 @@
                 <button type='button' class="generate-button" id="generateButton" tabindex="12">Generate</button>
                 <button type='button' class="generate-button" id="ResetButton" tabindex="99">Reset</button>
             </div>
-            <textArea type="text" class="result-text" id ="result" tabindex="99" readonly>This text area is not inteded to be read, just to validate the generation of the challenge. Copy paste it to discord to discover the challenge at the same time than your mates</textArea>
+            <textArea type="text" class="result-text" id ="result" tabindex="99" readonly>This text area is not inteded to be read. It is here to validate the generation of the challenge. Use the button below and  discover the challenge at the same time than your mates.</textArea>
             <div class="form-group2">
-                <button type='button' class="generate-button" id="copyButton" tabindex="13">Copy to Clipboard</button>
-                <span class="info-icon">
-                    <span class="info-popup">This is discord ready. Just click the button and paste in discord.</span>
-                </span>
+                <button type='button' class="generate-button" id="copyDiscord" tabindex="13">Copy for Discord</button>
+                <!-- <button type='button' class="generate-button" id="copyFF" tabindex="14">Copy for FFXIV</button> -->
             </div>
         </form>
     </div>
@@ -202,16 +200,11 @@
         const generateButton = document.getElementById("generateButton");
         const resetButton = document.getElementById("ResetButton");
         const resultText = document.getElementById("result");
-        const copyButton = document.getElementById("copyButton");
+        const copyButtonDiscord = document.getElementById("copyDiscord");
+        //const copyButtonFF = document.getElementById("copyFF");
         const fieldTabIndex = ["4", "8", "5", "9", "6", "10", "7", "11"];
+        let challengeText = "";
 
-        // Initially, set the 2nd column text fields as readonly and grayed out
-        // textFields.forEach((textField, index) => {
-        //     if (index % 2 !== 0) {
-        //         textField.setAttribute("readonly", "readonly");
-        //         textField.style.backgroundColor = "#555"; // Dark gray background color
-        //     }
-        // });
 
         // Add event listeners to radio buttons to enable/disable text fields
         partySize4.addEventListener("change", () => {
@@ -236,16 +229,21 @@
             });
         });
 
-        copyButton.addEventListener("click", () => {
-            // Select the text inside the result text field
-            resultText.select();
-            resultText.setSelectionRange(0, 99999); // For mobile devices
+        function copyToClipboard(text) {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+        }
 
-            // Copy the selected text to the clipboard
-            document.execCommand("copy");
+        // copyButtonFF.addEventListener("click", () => {
+        //     copyToClipboard(challengeText)
+        // });
 
-            // Deselect the text
-            resultText.setSelectionRange(0, 0);
+        copyButtonDiscord.addEventListener("click", () => {
+            copyToClipboard("```" + challengeText + "```")
         });
 
         document.addEventListener("DOMContentLoaded", onDOMReady);
@@ -259,9 +257,6 @@
             localStorage.setItem('ps_local4', partySize4.checked);
             localStorage.setItem('ps_local8', partySize8.checked);
             localStorage.setItem(hard.name, hard.checked);
-
-            console.log(localStorage.getItem('ps_local4'));
-            console.log(localStorage.getItem('ps_local8'));
         }
 
         function onDOMReady() {
@@ -325,6 +320,8 @@
             partySize4.checked = true;
             partySize8.checked = false;
             hard.checked = false;
+
+            resultText.value = "This text area is not inteded to be read. It is here to validate the generation of the challenge. Use the button below and  discover the challenge at the same time than your mates."
         }
 
         function onPageClose(event) {
@@ -347,8 +344,8 @@
         generateButton.addEventListener("click", async () => {
             const playerNames = [p1.value, p2.value, p3.value, p4.value, p5.value, p6.value, p7.value, p8.value];
 
-            const res = await generateChallenge(constrains.value, partySize4.checked, partySize8.checked, playerNames, hard.checked);
-            resultText.value = res;
+            challengeText = await generateChallenge(constrains.value, partySize4.checked, partySize8.checked, playerNames, hard.checked);
+            resultText.value = challengeText;
             saveContent();
         });
     </script>
