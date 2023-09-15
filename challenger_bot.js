@@ -1,8 +1,26 @@
+function getJson(path) {
+    fetch(path)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+                return response.json(); // Parse the response as JSON
+            })
+        .then(data => {
+            console.log(data);
+            return data;
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+}
+
+
 function importData() {
-    const instances = JSON.parse('instances.json');
-    const challenges = JSON.parse('challenges.json');
-    const roles = JSON.parse('roles.json');
-    const secret = JSON.parse('secret_challenges.json');
+    const instances = getJson('instances.json');
+    const challenges = getJson('challenges.json');
+    const roles = getJson('roles.json');
+    const secret = getJson('secret_challenges.json');
     return [instances, challenges, roles, secret];
 }
 
