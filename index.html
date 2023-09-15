@@ -42,8 +42,8 @@
             position: relative;
             background-color: #0073e6;
             color: #fff;
-            width: 20px; /* Smaller circle */
-            height: 20px; /* Smaller circle */
+            width: 17px; /* Smaller circle */
+            height: 17px; /* Smaller circle */
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -52,13 +52,13 @@
         }
         .info-icon::before {
             content: "i";
-            font-weight: bold;
+            
         }
         .info-popup {
             display: none;
             position: absolute;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #ffffff;
+            background-color: rgba(255, 255, 255, 1.0);
+            color: #000000;
             padding: 5px;
             border-radius: 5px;
             bottom: 25px;
@@ -66,7 +66,7 @@
             transform: translateX(-50%);
             white-space: nowrap;
         }
-        .form-group:hover .info-popup {
+        .info-icon:hover .info-popup {
             display: block;
         }
         /* Arrange 8 text fields in a 2x4 grid pattern */
@@ -131,7 +131,7 @@
             <div class="form-group">
                 <label for="playerNames">Player names:</label>
                 <span class="info-icon">
-                    <span class="info-popup">If given, the generator will tell you who needs to play what</span>
+                    <span class="info-popup">If given, the generator will tell you who needs to play what. <br>Missing name(s) will be replaced by generic one.</span>
                 </span>
             </div>
             <!-- Arrange 8 text fields in a 2x4 grid pattern -->
