@@ -174,10 +174,11 @@
                 <button type='button' class="generate-button" id="generateButton" tabindex="12">Generate</button>
                 <button type='button' class="generate-button" id="ResetButton" tabindex="99">Reset</button>
             </div>
-            <textArea type="text" class="result-text" id ="result" tabindex="99" readonly>This text area is not inteded to be read. It is here to validate the generation of the challenge. Use the button below and  discover the challenge at the same time than your mates.</textArea>
+            <textArea type="text" class="result-text" id ="result" tabindex="99" readonly>This text area is not inteded to be read. It is here to validate the generation of the challenge. Use the buttons below and  discover the challenge at the same time than your mates.</textArea>
             <div class="form-group2">
                 <button type='button' class="generate-button" id="copyDiscord" tabindex="13">Copy for Discord</button>
-                <!-- <button type='button' class="generate-button" id="copyFF" tabindex="14">Copy for FFXIV</button> -->
+                <button type='button' class="generate-button" id="copyFF" tabindex="14">Copy for FFXIV</button>
+                <button type='button' class="generate-button" id="copyNormal" tabindex="15">Copy</button>
             </div>
         </form>
     </div>
@@ -201,9 +202,12 @@
         const resetButton = document.getElementById("ResetButton");
         const resultText = document.getElementById("result");
         const copyButtonDiscord = document.getElementById("copyDiscord");
-        //const copyButtonFF = document.getElementById("copyFF");
+        const copyButtonFF = document.getElementById("copyFF");
+        const copyButtonNormal = document.getElementById("copyNormal");
         const fieldTabIndex = ["4", "8", "5", "9", "6", "10", "7", "11"];
-        let challengeText = "";
+        let challengeNormalText = "";
+        let challengeDiscordText = "";
+        let challengeFfText = "";
 
 
         // Add event listeners to radio buttons to enable/disable text fields
@@ -238,12 +242,16 @@
             document.body.removeChild(tempInput);
         }
 
-        // copyButtonFF.addEventListener("click", () => {
-        //     copyToClipboard(challengeText)
-        // });
+        copyButtonNormal.addEventListener("click", () => {
+            copyToClipboard(challengeNormalText)
+        });
+
+        copyButtonFF.addEventListener("click", () => {
+            copyToClipboard(challengeFfText)
+        });
 
         copyButtonDiscord.addEventListener("click", () => {
-            copyToClipboard("```" + challengeText + "```")
+            copyToClipboard(challengeDiscordText)
         });
 
         document.addEventListener("DOMContentLoaded", onDOMReady);
@@ -321,7 +329,7 @@
             partySize8.checked = false;
             hard.checked = false;
 
-            resultText.value = "This text area is not inteded to be read. It is here to validate the generation of the challenge. Use the button below and  discover the challenge at the same time than your mates."
+            resultText.value = "This text area is not inteded to be read. It is here to validate the generation of the challenge. Use the buttons below and  discover the challenge at the same time than your mates."
         }
 
         function onPageClose(event) {
@@ -343,9 +351,8 @@
 
         generateButton.addEventListener("click", async () => {
             const playerNames = [p1.value, p2.value, p3.value, p4.value, p5.value, p6.value, p7.value, p8.value];
-
-            challengeText = await generateChallenge(constrains.value, partySize4.checked, partySize8.checked, playerNames, hard.checked);
-            resultText.value = challengeText;
+            [challengeNormalText, challengeDiscordText, challengeFfText] = await generateChallenge(constrains.value, partySize4.checked, partySize8.checked, playerNames, hard.checked);
+            resultText.value = challengeNormalText;
             saveContent();
         });
     </script>

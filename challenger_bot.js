@@ -167,23 +167,28 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
         return `Number of players given (${partySize}) not valid. Should be 4 or 8.`;
     }
 
-    retStr = "Welcome to XIV challenge run generator!\r\n";
+    strNormal = `Welcome to XIV challenge run generator!\r\n`;
+    strFf = `Your challenge will be. `
 
     const inst = getInstances(i, partySize, maxLevel, withHard);
-    retStr += `Instance     : ${inst}\r\n`;
+    strNormal += `Instance     : ${inst}\r\n`;
+    strFf = `INSTANCE : ${inst}`;
 
     const [chal, classOnly, tankOnly, healOnly, dpsOnly] = getChallenges(c, challengeNumberOf);
     if (!chal) {
         return `Failed to find ${challengeNumberOf} challenges compatible with each other after 10 tries. Please try to lower the number of challenges.`;
     }
-    retStr += `Constrain(s) : ${chal[0]}\r\n`;
+    strNormal += `Constrain(s) : ${chal[0]}\r\n`;
+    strFf += `         ///        CONSTRAINS : ${chal[0]}`;
     for (let i = 1; i < chal.length; i++) {
-        retStr += `               ${chal[i]}\r\n`;
+        strNormal += `               ${chal[i]}\r\n`;
+        strFf += `   |   ${chal[i]}`;
     }
 
     const sText = getSecretChallenge(s, partySize, playerNames);
     if (sText) {
-        retStr += `Secret bonus : ${sText}\r\n`;
+        strNormal += `Secret bonus : ${sText}\r\n`;
+        strFf += `         ///        SECRET : ${sText}`;
     }
 
     let printRole = false;
@@ -227,11 +232,15 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
         const role = getRoles(r, tn, hn, dn, classOnly);
         const distributedRoles = distributeRoles(role, playerNames);
 
-        retStr += `Composition  : ${distributedRoles[0]}\r\n`;
+        strNormal += `Composition  : ${distributedRoles[0]}\r\n`;
+        strFf += `         ///        COMPO  : ${distributedRoles[0]}`;
         for (let i = 1; i < distributedRoles.length; i++) {
-            retStr += `               ${distributedRoles[i]}\r\n`;
+            strNormal += `               ${distributedRoles[i]}\r\n`;
+            strFf += `   |   ${distributedRoles[i]}`;
         }
     }
 
-    return retStr;
+    strDiscord = "```" + strNormal + "```";
+
+    return [strNormal, strDiscord, strFf];
 }
