@@ -162,7 +162,7 @@
                 </div>
             </div>
             <button type='button' class="generate-button" id="generateButton">Generate</button>
-            <input type="text" class="result-text" readonly>
+            <textArea type="text" class="result-text" id ="result" readonly></textArea>
             <button type='button' class="generate-button" id="copyButton">Copy to Clipboard</button>
         </form>
     </div>
@@ -183,7 +183,7 @@
         const p7 = document.getElementById("textField6");
         const p8 = document.getElementById("textField8");
         const generateButton = document.querySelector(".generate-button");
-        const resultText = document.querySelector(".result-text");
+        const resultText = document.getElementById("result");
         const copyButton = document.getElementById("copyButton");
 
         // Initially, set the 2nd column text fields as readonly and grayed out
@@ -226,10 +226,10 @@
             resultText.setSelectionRange(0, 0);
         });
 
-        generateButton.addEventListener("click", () => {
+        generateButton.addEventListener("click", async () => {
             const playerNames = [p1.value, p2.value, p3.value, p4.value, p5.value, p6.value, p7.value, p8.value];
 
-            const res = generateChallenge(constrains.value, partySize4.checked, partySize8.checked, playerNames, hard.checked);
+            const res = await generateChallenge(constrains.value, partySize4.checked, partySize8.checked, playerNames, hard.checked);
             resultText.value = res;
             console.log(res);
         });

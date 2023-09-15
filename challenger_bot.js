@@ -1,35 +1,23 @@
-function getJson(path) {
-    let rawdata;
-
-    fetch(path)
-        .then((response) => {
-            // Check if the response status is OK (status code 200).
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            // Parse the response body as JSON.
-            return response.json();
-        })
-        .then((jsonData) => {
-            // Handle the JSON data.
-            console.log('JSON data:', jsonData);
-            rawdata = jsonData;
-        })
-        .catch((error) => {
-            // Handle any errors that occurred during the fetch.
-            console.error('Fetch error:', error);
-        });
-    
-    return rawdata;
+async function getJson(path) {
+    a = fetch(path).then((response) => {return response.json();});
+    b = await a.then(jsonData => {return jsonData});
+    return b;
 }
 
 
-function importData() {
-    const instances = getJson('instances.json');
-    const challenges = getJson('challenges.json');
-    const roles = getJson('roles.json');
-    const secret = getJson('secret_challenges.json');
+async function importData() {
+    const instances = await getJson('instances.json');
+    const challenges = await getJson('challenges.json');
+    const roles = await getJson('roles.json');
+    const secret = await getJson('secret_challenges.json');
     return [instances, challenges, roles, secret];
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
 }
 
 function getInstances(data, partySize, maxLevel, withHard) {
@@ -39,7 +27,7 @@ function getInstances(data, partySize, maxLevel, withHard) {
         data = data.filter(d => d.difficulty === "normal");
     }
     data = data.map(d => `${d.name} (${d.type} lvl ${d.level})`);
-    shuffle(data);
+    shuffleArray(data);
     return data[0];
 }
 
@@ -51,10 +39,11 @@ function getChallenges(challenges, number) {
     let dpsOnly = false;
     let continueFlag = true;
     let tryCounter = 0;
+    let selected;
 
     while (continueFlag) {
-        shuffle(data);
-        const selected = data.slice(0, number);
+        shuffleArray(data);
+        selected = data.slice(0, number);
 
         const selectedId = selected.map(s => s.id);
         const incompatibilityId = [...new Set(selected.flatMap(s => s.incompatibility))];
@@ -114,9 +103,9 @@ function getRoles(roles, tank, healer, dps, classOnly) {
     while (h.length < healer + 1) h.push(...h);
     while (d.length < dps + 1) d.push(...d);
 
-    shuffle(t);
-    shuffle(h);
-    shuffle(d);
+    shuffleArray(t);
+    shuffleArray(h);
+    shuffleArray(d);
 
     data = t.slice(0, tank).concat(h.slice(0, healer), d.slice(0, dps));
 
@@ -124,7 +113,7 @@ function getRoles(roles, tank, healer, dps, classOnly) {
 }
 
 function distributeRoles(roles, names) {
-    shuffle(names);
+    shuffleArray(names);
 
     const data = [];
     for (let i = 0; i < roles.length; i++) {
@@ -137,7 +126,7 @@ function distributeRoles(roles, names) {
 function getSecretChallenge(secret, partySize, playerNames) {
     let retStr = "";
     if (Math.floor(Math.random() * 20) + 1 === 1) {
-        shuffle(secret);
+        shuffleArray(secret);
         const d = secret[0];
         retStr = `${d.name} (${d.description})`;
         if (playerNames.length === 0) {
@@ -147,7 +136,7 @@ function getSecretChallenge(secret, partySize, playerNames) {
                 retStr += "(order: T1->D1->H1->D2->T2->D3->H2->D4->T1)";
             }
         } else {
-            shuffle(playerNames);
+            shuffleArray(playerNames);
             retStr += "(order: ";
             for (const p of playerNames) {
                 retStr += `${p}->`;
@@ -159,10 +148,12 @@ function getSecretChallenge(secret, partySize, playerNames) {
     return retStr;
 }
 
-function generateChallenge(challengeNumberOf, partySize4, partySize8, playerNames, withHard) {
-    const [i, c, r, s] = importData();
+async function generateChallenge(challengeNumberOf, partySize4, partySize8, playerNames, withHard) {
+    const [i, c, r, s] = await importData();
     const maxLevel = 90;
     let partySize;
+
+    console.log(playerNames);
 
     if (partySize4) {
         partySize = 4;
@@ -172,32 +163,33 @@ function generateChallenge(challengeNumberOf, partySize4, partySize8, playerName
         partySize = -1;
     }
 
-    playerNames = playerNames[0].slice(0, partySize);
+    playerNames = playerNames.slice(0, partySize);
+    console.log(playerNames);
 
     if (!(partySize === 4 || partySize === 8)) {
         return `Number of players given (${partySize}) not valid. Should be 4 or 8.`;
     }
 
-    const retStr = "```Welcome to XIV challenge run generator!\n";
+    retStr = "```Welcome to XIV challenge run generator!\r\n";
 
     const inst = getInstances(i, partySize, maxLevel, withHard);
-    retStr += `Instance     : ${inst}\n`;
+    retStr += `Instance     : ${inst}\r\n`;
 
     const [chal, classOnly, tankOnly, healOnly, dpsOnly] = getChallenges(c, challengeNumberOf);
     if (!chal) {
         return `Failed to find ${challengeNumberOf} challenges compatible with each other after 10 tries. Please try to lower the number of challenges.`;
     }
-    retStr += `Constrain(s) : ${chal[0]}\n`;
+    retStr += `Constrain(s) : ${chal[0]}\r\n`;
     for (let i = 1; i < chal.length; i++) {
-        retStr += `               ${chal[i]}\n`;
+        retStr += `               ${chal[i]}\r\n`;
     }
 
     const sText = getSecretChallenge(s, partySize, playerNames);
     if (sText) {
-        retStr += `Secret bonus : ${sText}\n`;
+        retStr += `Secret bonus : ${sText}\r\n`;
     }
 
-    if (playerNames.length !== 0) {
+    if (playerNames[0].length !== 0) {
         let tn, hn, dn;
         if (tankOnly) {
             tn = partySize;
@@ -224,9 +216,9 @@ function generateChallenge(challengeNumberOf, partySize4, partySize8, playerName
         const role = getRoles(r, tn, hn, dn, classOnly);
         const distributedRoles = distributeRoles(role, playerNames);
 
-        retStr += `Composition  : ${distributedRoles[0]}\n`;
+        retStr += `Composition  : ${distributedRoles[0]}\r\n`;
         for (let i = 1; i < distributedRoles.length; i++) {
-            retStr += `               ${distributedRoles[i]}\n`;
+            retStr += `               ${distributedRoles[i]}\r\n`;
         }
     }
 
