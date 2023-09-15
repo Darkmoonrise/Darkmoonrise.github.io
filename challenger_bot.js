@@ -2,16 +2,21 @@ function getJson(path) {
     let rawdata;
 
     fetch(path)
-        .then(response => {
+        .then((response) => {
+            // Check if the response status is OK (status code 200).
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                throw new Error('Network response was not ok');
             }
-                return response.json(); // Parse the response as JSON
-            })
-        .then(data => {
-            rawdata = data;
+            // Parse the response body as JSON.
+            return response.json();
         })
-        .catch(error => {
+        .then((jsonData) => {
+            // Handle the JSON data.
+            console.log('JSON data:', jsonData);
+            rawdata = jsonData;
+        })
+        .catch((error) => {
+            // Handle any errors that occurred during the fetch.
             console.error('Fetch error:', error);
         });
     
