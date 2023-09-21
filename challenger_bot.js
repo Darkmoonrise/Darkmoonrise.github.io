@@ -50,11 +50,18 @@ function getChallenges(challenges, number, withHardChallenge) {
         selected = data.slice(0, number);
 
         const selectedId = selected.map(s => s.id);
-        const incompatibilityId = [...new Set(selected.flatMap(s => s.incompatibility))];
+        let incompatibilityId = [];
+        for (iid of selected.map(s => s.incompatibilty))
+        {
+            if(iid.length)
+            {
+                incompatibilityId = incompatibilityId.concat(iid);
+            }
+        }
 
         continueFlag = false;
 
-        if (number === 1 && incompatibilityId.includes(-1)) {
+        if (number != 1 && incompatibilityId.includes(-1)) {
             continueFlag = true;
         }
 
