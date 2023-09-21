@@ -41,12 +41,7 @@ function getChallenges(challenges, number, withHardChallenge) {
     let tryCounter = 0;
     let selected;
 
-    console.log(withHardChallenge);
-
-    console.log(data[0].difficulty);
-
     if(!withHardChallenge) {
-        console.log("asdasd");
         data = data.filter(d => d.difficulty === 0);
     }
 
