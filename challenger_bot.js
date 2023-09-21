@@ -127,25 +127,27 @@ function distributeRoles(roles, names) {
     return data;
 }
 
-function getSecretChallenge(secret, partySize, playerNames) {
+function getSecretChallenge(secret, partySize, playerNames, printRole) {
     let retStr = "";
     if (Math.floor(Math.random() * 20) + 1 === 1) {
         shuffleArray(secret);
         const d = secret[0];
         retStr = `${d.name} (${d.description})`;
-        if (playerNames.length === 0) {
-            if (partySize === 4) {
-                retStr += "(order: T->H->D1->D2->T)";
+        if(d.name === "Santa") {
+            if (!printRole) {
+                if (partySize === 4) {
+                    retStr += "(order: T->H->D1->D2->T)";
+                } else {
+                    retStr += "(order: T1->D1->H1->D2->T2->D3->H2->D4->T1)";
+                }
             } else {
-                retStr += "(order: T1->D1->H1->D2->T2->D3->H2->D4->T1)";
+                shuffleArray(playerNames);
+                retStr += "(order: ";
+                for (const p of playerNames) {
+                    retStr += `${p}->`;
+                }
+                retStr += `${playerNames[0]})`;
             }
-        } else {
-            shuffleArray(playerNames);
-            retStr += "(order: ";
-            for (const p of playerNames) {
-                retStr += `${p}->`;
-            }
-            retStr += `${playerNames[0]})`;
         }
     }
 
@@ -189,12 +191,6 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
         strFf += `   |   ${chal[i]}`;
     }
 
-    const sText = getSecretChallenge(s, partySize, playerNames);
-    if (sText) {
-        strNormal += `Secret bonus : ${sText}\r\n`;
-        strFf += `         ///        SECRET : ${sText}`;
-    }
-
     let printRole = false;
     for (let i = 0; i < playerNames.length; i++) {
         if (playerNames[i].length !== 0)
@@ -202,14 +198,24 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
             printRole = true;
         }
     }
-    if (printRole) {
+
+    if(printRole) {
         for (let i = 0; i < playerNames.length; i++) {
             if (playerNames[i].length == 0)
             {
                 playerNames[i] = `player${i+1}`;
             }
         }
+    }
 
+    const sText = getSecretChallenge(s, partySize, playerNames, printRole);
+    if (sText) {
+        strNormal += `Secret bonus : ${sText}\r\n`;
+        strFf += `         ///        SECRET : ${sText}`;
+    }
+
+
+    if (printRole) {
         let tn, hn, dn;
         if (tankOnly) {
             tn = partySize;
