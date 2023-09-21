@@ -31,7 +31,7 @@ function getInstances(data, partySize, maxLevel, withHard) {
     return data[0];
 }
 
-function getChallenges(challenges, number) {
+function getChallenges(challenges, number, withHardChallenge) {
     let data = challenges;
     let classOnly = false;
     let tankOnly = false;
@@ -40,6 +40,15 @@ function getChallenges(challenges, number) {
     let continueFlag = true;
     let tryCounter = 0;
     let selected;
+
+    console.log(withHardChallenge);
+
+    console.log(data[0].difficulty);
+
+    if(!withHardChallenge) {
+        console.log("asdasd");
+        data = data.filter(d => d.difficulty === 0);
+    }
 
     while (continueFlag) {
         shuffleArray(data);
@@ -148,7 +157,7 @@ function getSecretChallenge(secret, partySize, playerNames) {
     return retStr;
 }
 
-async function generateChallenge(challengeNumberOf, partySize4, partySize8, playerNames, withHard) {
+async function generateChallenge(challengeNumberOf, partySize4, partySize8, playerNames, withHard, withHardChallenge) {
     const [i, c, r, s] = await importData();
     const maxLevel = 90;
     let partySize;
@@ -174,7 +183,7 @@ async function generateChallenge(challengeNumberOf, partySize4, partySize8, play
     strNormal += `Instance     : ${inst}\r\n`;
     strFf = `INSTANCE : ${inst}`;
 
-    const [chal, classOnly, tankOnly, healOnly, dpsOnly] = getChallenges(c, challengeNumberOf);
+    const [chal, classOnly, tankOnly, healOnly, dpsOnly] = getChallenges(c, challengeNumberOf, withHardChallenge);
     if (!chal) {
         return `Failed to find ${challengeNumberOf} challenges compatible with each other after 10 tries. Please try to lower the number of challenges.`;
     }

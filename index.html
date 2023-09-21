@@ -145,6 +145,13 @@
                 </span>
             </div>
             <div class="form-group">
+                <label for="includeHardChallenge">Include hard challenge:</label>
+                <input type="checkbox" id="includeHardChallenge" name="includeHardChallenge" tabindex="4">
+                <span class="info-icon">
+                    <span class="info-popup">Will include more difficult challenges</span>
+                </span>
+            </div>
+            <div class="form-group">
                 <label for="playerNames">Player names:</label>
                 <span class="info-icon">
                     <span class="info-popup">If given, the generator will tell you who needs to play what. <br>Missing name(s) will be replaced by placeholder(s).</span>
@@ -153,39 +160,39 @@
             <!-- Arrange 8 text fields in a 2x4 grid pattern -->
             <div class="text-field-container">
                 <div class="text-field">
-                    <input type="text" id="textField1" name="textField1" tabindex="4" placeholder="Player1">
+                    <input type="text" id="textField1" name="textField1" tabindex="5" placeholder="Player1">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField2" name="textField2" tabindex="8" placeholder="Player5">
+                    <input type="text" id="textField2" name="textField2" tabindex="9" placeholder="Player5">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField3" name="textField3" tabindex="5" placeholder="Player2">
+                    <input type="text" id="textField3" name="textField3" tabindex="6" placeholder="Player2">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField4" name="textField4" tabindex="9" placeholder="Player6">
+                    <input type="text" id="textField4" name="textField4" tabindex="10" placeholder="Player6">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField5" name="textField5" tabindex="6" placeholder="Player3">
+                    <input type="text" id="textField5" name="textField5" tabindex="7" placeholder="Player3">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField6" name="textField6" tabindex="10" placeholder="Player7">
+                    <input type="text" id="textField6" name="textField6" tabindex="11" placeholder="Player7">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField7" name="textField7" tabindex="7" placeholder="Player4">
+                    <input type="text" id="textField7" name="textField7" tabindex="8" placeholder="Player4">
                 </div>
                 <div class="text-field">
-                    <input type="text" id="textField8" name="textField8" tabindex="11" placeholder="Player8">
+                    <input type="text" id="textField8" name="textField8" tabindex="12" placeholder="Player8">
                 </div>
             </div>
             <div class="form-group2">
-                <button type='button' class="generate-button" id="generateButton" tabindex="12">Generate</button>
+                <button type='button' class="generate-button" id="generateButton" tabindex="13">Generate</button>
                 <button type='button' class="generate-button" id="ResetButton" tabindex="99">Reset all</button>
             </div>
             <textArea type="text" class="result-text" id ="result" tabindex="99" readonly>This text area is not inteded to be read. It is here to validate the generation of the challenge. Use the buttons below and  discover the challenge at the same time than your mates.</textArea>
             <div class="form-group2">
-                <button type='button' class="generate-button" id="copyDiscord" tabindex="13">Copy for Discord</button>
-                <button type='button' class="generate-button" id="copyFF" tabindex="14">Copy for FFXIV</button>
-                <button type='button' class="generate-button" id="copyNormal" tabindex="15">Copy</button>
+                <button type='button' class="generate-button" id="copyDiscord" tabindex="14">Copy for Discord</button>
+                <button type='button' class="generate-button" id="copyFF" tabindex="15">Copy for FFXIV</button>
+                <button type='button' class="generate-button" id="copyNormal" tabindex="16">Copy</button>
             </div>
         </form>
     </div>
@@ -196,6 +203,7 @@
     <script  type="text/javascript">
         const constrains = document.getElementById("constrains");
         const hard = document.getElementById("includeHardContent");
+        const hardChallenge = document.getElementById("includeHardChallenge");
         const partySize4 = document.getElementById("partySize4");
         const partySize8 = document.getElementById("partySize8");
         const textFields = document.querySelectorAll(".text-field input");
@@ -274,6 +282,7 @@
             localStorage.setItem('ps_local4', partySize4.checked);
             localStorage.setItem('ps_local8', partySize8.checked);
             localStorage.setItem(hard.name, hard.checked);
+            localStorage.setItem(hardChallenge.name, hardChallenge.checked);
         }
 
         function onDOMReady() {
@@ -296,6 +305,11 @@
             if (localStorage.getItem(hard.name) !== null)
             {
                 hard.checked = localStorage.getItem(hard.name).toLowerCase() === "true";
+            }
+
+            if (localStorage.getItem(hardChallenge.name) !== null)
+            {
+                hardChallenge.checked = localStorage.getItem(hardChallenge.name).toLowerCase() === "true";
             }
 
             textFields.forEach((textField, index) => {
@@ -337,6 +351,7 @@
             partySize4.checked = true;
             partySize8.checked = false;
             hard.checked = false;
+            hardChallenge.checked = false;
 
             resultText.value = "This text area is not inteded to be read. It is here to validate the generation of the challenge. Use the buttons below and  discover the challenge at the same time than your mates."
         }
@@ -356,11 +371,12 @@
             localStorage.removeItem('ps_local4');
             localStorage.removeItem('ps_local8');
             localStorage.removeItem(hard.name);
+            localStorage.removeItem(hardChallenge.name);
         });
 
         generateButton.addEventListener("click", async () => {
             const playerNames = [p1.value, p2.value, p3.value, p4.value, p5.value, p6.value, p7.value, p8.value];
-            [challengeNormalText, challengeDiscordText, challengeFfText] = await generateChallenge(constrains.value, partySize4.checked, partySize8.checked, playerNames, hard.checked);
+            [challengeNormalText, challengeDiscordText, challengeFfText] = await generateChallenge(constrains.value, partySize4.checked, partySize8.checked, playerNames, hard.checked, hardChallenge.checked);
             resultText.value = challengeNormalText;
             saveContent();
         });
